@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm.js';
 
 export default function AddPlacePopup({ isOpen, onClose, onAddPlaceSubmit }) {
 
     const [name, setName] = useState('');
     const [link, setLink] = useState('');
+
+    useEffect(() => {
+        setName('');
+        setLink('');
+    }, [isOpen]);
 
     function handleChangeName(e) {
         setName(e.target.value);
@@ -31,10 +36,10 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlaceSubmit }) {
             isOpen={isOpen}
             onClose={onClose}
             onSubmit={handleSubmit}>
-            <input onChange={handleChangeName} className="popup__field popup__field_type_name-place" type="text" name="name" id="name-place"
+            <input value={name || ''} onChange={handleChangeName} className="popup__field popup__field_type_name-place" type="text" name="name" id="name-place"
                 placeholder="Название" required minLength="2" maxLength="30" />
             <span className="popup__field-error name-place-error"></span>
-            <input onChange={handleChangeLink} className="popup__field popup__field_type_link" type="url" name="link" id="link-place"
+            <input value={link || ''} onChange={handleChangeLink} className="popup__field popup__field_type_link" type="url" name="link" id="link-place"
                 placeholder="Ссылка на картинку" required />
             <span className="popup__field-error link-place-error"></span>
         </PopupWithForm>
