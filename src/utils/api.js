@@ -71,11 +71,11 @@ class Api {
         }).then(this._handleResponse);
     }
 
-    likeCard({ cardId, isLiked }) {
+    likeCard(cardId, isLiked) {
         return isLiked ? this._deleteLike(cardId) : this._putLike(cardId);
     }
 
-    updateAvatar(avatar) {
+    updateAvatar({avatar}) {
         return fetch(`${this._address}/users/me/avatar`, {
             method: "PATCH",
             body: JSON.stringify({
