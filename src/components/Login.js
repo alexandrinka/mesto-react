@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import * as auth from '../utils/auth';
 
-export default function Login({handleLogin}) {
+export default function Login({ handleLogin }) {
   const [formValue, setFormValue] = useState({
     email: '',
     password: ''
@@ -25,23 +25,26 @@ export default function Login({handleLogin}) {
       return;
     }
     auth.authorize(formValue.password, formValue.email)
-    .then((data) => {
-      if (data.token){
-        //setFormValue({email: '', password: ''});
-        handleLogin(data.token);
-        navigate('/', {replace: true});
-      }
-    })
-      .catch(err => console.log(err));
+      .then((data) => {
+        if (data.token) {
+          //setFormValue({email: '', password: ''});
+          handleLogin(data.token);
+          navigate('/', { replace: true });
+        }
+      })
+
+      .catch((err) =>
+        console.log(`Ошибка авторизации: ${err}`)
+      );
   }
 
   return (
     <section className='entrance' >
       <div className='entrance__container'>
         <h3 className='entrance__title'>Вход</h3>
-        <form onSubmit={handleSubmit} className='entrance__form' name='entrance-form-entrance' noValidate>
+        <form onSubmit={handleSubmit} className='entrance__form' name='entrance-form-entrance'>
           <input
-            value={formValue.email} 
+            value={formValue.email}
             onChange={handleChange}
             id="loggin-input"
             type="email"
@@ -54,7 +57,7 @@ export default function Login({handleLogin}) {
           />
 
           <input
-            value={formValue.password} 
+            value={formValue.password}
             onChange={handleChange}
             id="password-input"
             type="password"

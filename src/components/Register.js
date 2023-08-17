@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import * as auth from '../utils/auth';
 
-export default function Register({handleRegister}) {
+export default function Register({ handleRegister }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -22,18 +22,20 @@ export default function Register({handleRegister}) {
             if (typeof res.error == "undefined") {
                 navigate('/sign-in', { replace: true });
                 handleRegister(true);
-            }else{
+            } else {
                 handleRegister(false);
             }
-        }
-        );
+        })
+            .catch((err) =>
+                console.log(`Ошибка регистрации: ${err}`)
+            );;
     }
 
     return (
         <section className='entrance page__center' >
             <div className='entrance__container'>
                 <h3 className='entrance__title'>Регистрация</h3>
-                <form onSubmit={handleSubmit} className='entrance__form' name='entrance-form-register' noValidate>
+                <form onSubmit={handleSubmit} className='entrance__form' name='entrance-form-register'>
                     <input
                         value={email}
                         onChange={handleChangeEmail}

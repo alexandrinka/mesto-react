@@ -12,7 +12,7 @@ import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRouteElement from "./ProtectedRoute";
-import { setToken, getToken } from '../utils/token';
+import { setToken, getToken, removeToken } from '../utils/token';
 import * as auth from '../utils/auth';
 import InfoTooltip from "./InfoTooltip";
 
@@ -24,8 +24,9 @@ function App() {
     const [selectedCard, setSelectedCard] = useState({ isOpen: false, element: {} });
     const [cards, setCards] = useState([]);
     const [currentUser, setCurrentUser] = useState({});
-    const [loggedIn, setLoggedIn] = useState(undefined);
+    const [loggedIn, setLoggedIn] = useState(false);
     const [token, setTokenState] = useState(getToken());
+    const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
 
@@ -37,24 +38,25 @@ function App() {
 
     const tokenCheck = () => {
         if (!token) {
-            setLoggedIn(false);
             return;
         }
 
         auth.checkToken(token).then((res) => {
             if (res) {
+                console.log(res);
                 setLoggedIn(true);
                 navigate('/', { replace: true });
-            }
-            else {
-                setLoggedIn(false);
+                setEmail(res.data.email);
             }
         })
+            .catch((err) =>
+                console.log(`Ошибка токена: ${err}`)
+            );
     }
 
     useEffect(() => {
         tokenCheck();
-    }, []);
+    }, [navigate]);
 
     const handleEditProfile = () => {
         setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
@@ -139,24 +141,28 @@ function App() {
     }, []);
 
     useEffect(() => {
-        api.getCards()
-            .then((data) => {
-                setCards(data);
-            })
-            .catch(err => {
-                console.log("Ошибка в загрузке информации о карточках" + err);
-            })
-    }, []);
+        if (loggedIn) {
+            api.getCards()
+                .then((data) => {
+                    setCards(data);
+                })
+                .catch(err => {
+                    console.log("Ошибка в загрузке информации о карточках" + err);
+                })
+        }
+    }, [loggedIn]);
 
-    if(loggedIn === undefined){
-        return null;
+    function handleSignOut() {
+        setEmail('');
+        setLoggedIn(false);
+        navigate('/sign-in', { replace: true });
+        removeToken();
     }
 
     return (
-
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
-                <Header />
+                <Header onSignOut={handleSignOut} email={email} />
                 <Routes>
                     <Route path="*" element={loggedIn ? <Navigate to="/" replace /> : <Navigate to="/sign-in" replace />} />
                     <Route path="/sign-in" element={<Login handleLogin={handleLogin} />}></Route>
