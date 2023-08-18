@@ -27,8 +27,7 @@ export default function Login({ handleLogin }) {
     auth.authorize(formValue.password, formValue.email)
       .then((data) => {
         if (data.token) {
-          //setFormValue({email: '', password: ''});
-          handleLogin(data.token);
+          handleLogin(data.token, formValue.email);
           navigate('/', { replace: true });
         }
       })

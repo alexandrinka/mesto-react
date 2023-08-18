@@ -30,7 +30,8 @@ function App() {
     const navigate = useNavigate();
 
 
-    const handleLogin = (token) => {
+    const handleLogin = (token, newEmail) => {
+        setEmail(newEmail);
         setTokenState(token);
         setLoggedIn(true);
         setToken(token);
@@ -56,18 +57,18 @@ function App() {
 
     useEffect(() => {
         tokenCheck();
-    }, [navigate]);
+    }, []);
 
     const handleEditProfile = () => {
-        setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
+        setIsEditProfilePopupOpen(true);
     }
 
     const handleAddPlace = () => {
-        setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
+        setIsAddPlacePopupOpen(true);
     }
 
     const handleEditAvatar = () => {
-        setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
+        setIsEditAvatarPopupOpen(true);
     }
 
     const handleCardClick = (card) => {
@@ -131,14 +132,16 @@ function App() {
     }
 
     useEffect(() => {
-        api.getUserInfo()
-            .then(data => {
-                setCurrentUser(data);
-            })
-            .catch(err => {
-                console.log("Ошибка в загрузке пользователькой информации:" + err);
-            })
-    }, []);
+        if (loggedIn) {
+            api.getUserInfo()
+                .then(data => {
+                    setCurrentUser(data);
+                })
+                .catch(err => {
+                    console.log("Ошибка в загрузке пользователькой информации:" + err);
+                })
+        }
+    }, [loggedIn]);
 
     useEffect(() => {
         if (loggedIn) {
